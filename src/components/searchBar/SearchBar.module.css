@@ -1,0 +1,55 @@
+.searchBar {
+  background-image: url('./../../images/background.jpeg');
+  background-position: bottom center;
+  width: 1000px;
+  height: 200px;
+}
+
+.searchTitle {
+  color: white;
+  font-size: 30px;
+  font-weight: 550;
+  text-align: center;
+  padding-top: 20px;
+}
+
+.search {
+  width: 340px;
+  min-height: 30px;
+  border: 1px solid black;
+  margin: 0 auto;
+  background-color: white;
+}
+.searchInput {
+  width: 300px;
+  font-size: 22px;
+  border: none;
+  outline: none;
+  vertical-align: middle;
+}
+
+.search button {
+  width: 25px;
+  height: 25px;
+  background-color: white;
+  border: none;
+}
+
+.search button img {
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.sort {
+  padding-top: 20px;
+  width: 350px;
+  margin: 0 auto;
+}
+
+.sortTitle {
+  color: white;
+  font-size: 12px;
+  padding: 0 10px;
+}
