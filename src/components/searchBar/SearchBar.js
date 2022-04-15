@@ -1,24 +1,13 @@
 import { useState } from 'react';
+import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { booksSelector } from '../../store/state/books/selectors';
+import { searchSelector } from '../../store/state/search/selectors';
+import { searchBooksThunk } from '../../store/thunks/bookThunk';
+import { SUBJECT, ORDER } from '../../utils/constants';
 import styles from './SearchBar.module.css';
 
-const ORDER = {
-  RELEVANCE: 'relevance',
-  NEWEST: 'newest',
-};
-
-const SUBJECT = {
-  ALL: '',
-  ART: 'art',
-  BIOGRAPHY: 'biography',
-  COMPUTERS: 'computers',
-  COOKING: 'cooking',
-  HISTORY: 'history',
-  MEDICAL: 'medical',
-  POETRY: 'poetry',
-};
-
-export const SearchBar = ({ search, searchBooks }) => {
+const SearchBar = ({ search, searchBooks }) => {
   const [searchValue, setSearchValue] = useState('');
   const [cat, setCat] = useState(SUBJECT.ALL);
   const [orderBy, setOrderBy] = useState(ORDER.RELEVANCE);
@@ -37,7 +26,10 @@ export const SearchBar = ({ search, searchBooks }) => {
       <div className={styles.search}>
         <input type="search" className={styles.searchInput} onChange={({ target }) => setSearchValue(target.value)} />
         <button onClick={getSearchString}>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/OOjs_UI_icon_search-ltr.svg/1024px-OOjs_UI_icon_search-ltr.svg.png" />
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/de/OOjs_UI_icon_search-ltr.svg/1024px-OOjs_UI_icon_search-ltr.svg.png"
+            alt="back button"
+          />
         </button>
       </div>
       <div className={styles.sort}>
@@ -60,3 +52,14 @@ export const SearchBar = ({ search, searchBooks }) => {
     </div>
   );
 };
+
+const mapStateToProps = state => ({
+  search: searchSelector(state),
+  books: booksSelector(state),
+});
+
+const mapDispatchToProps = {
+  searchBooks: searchBooksThunk,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SearchBar);

@@ -1,19 +1,18 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { key } from '../mainPage/MainPage';
 import styles from './BookPage.module.css';
 import backImg from '../../images/back.png';
+import { getBookThunk } from '../../store/thunks/bookThunk';
+import { connect } from 'react-redux';
+import { currentBookSelector } from '../../store/state/books/selectors';
 
-export const BookPage = () => {
+const BookPage = ({ getBook, currentBook }) => {
   const { bookId } = useParams();
-  const [currentBook, setCurrentBook] = useState({});
+  const navigate = useNavigate();
 
   useEffect(() => {
-    axios
-      .get(`https://www.googleapis.com/books/v1/volumes/${bookId}?key=${key}`)
-      .then(response => setCurrentBook(response.data.volumeInfo));
-  }, [bookId]);
+    getBook(bookId);
+  }, [bookId, getBook]);
 
   const getDescription = () => {
     if (currentBook.description) {
@@ -21,16 +20,14 @@ export const BookPage = () => {
     }
   };
 
-  const navigate = useNavigate();
 
   const getBack = () => {
-    navigate(-1);
-  }
+    navigate('/');
+  };
 
   return (
     <div className={styles.bookPage}>
       <div className={styles.bookImage}>
-        {console.log(currentBook)}
         {currentBook.imageLinks ? (
           <img src={currentBook.imageLinks.smallThumbnail} alt="book img" />
         ) : (
@@ -68,3 +65,13 @@ export const BookPage = () => {
     </div>
   );
 };
+
+const mapStateToProps = state => ({
+  currentBook: currentBookSelector(state),
+});
+
+const mapDispatchToProps = {
+  getBook: getBookThunk,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BookPage);

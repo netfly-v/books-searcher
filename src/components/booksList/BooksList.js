@@ -1,34 +1,22 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { key } from '../mainPage/MainPage';
+import { booksSelector, totalItemsSelector } from '../../store/state/books/selectors';
+import { loadMoreBooksThunk } from '../../store/thunks/bookThunk';
 import styles from './BooksList.module.css';
 
-export const BooksList = ({ books, setBooks, search}) => {
-  const [startIndex, setStartIndex] = useState(0);
-
+const BooksList = ({ books, loadMoreBooks, totalItems }) => {
   const navigate = useNavigate();
 
   const openBookInfo = id => {
     navigate(`/bookPage/${id}`);
   };
 
-  useEffect(() => {
-    axios
-      .get(
-        `https://www.googleapis.com/books/v1/volumes?q=${search.query}+subject:${search.subject}&startIndex=${startIndex}&orderBy=${search.orderBy}&key=${key}`
-      )
-      .then(response => {
-        setBooks({ ...books, items: [...books.items, ...response.data.items] });
-      });
-  }, [startIndex]);
-
   return (
     <>
-      {books.totalItems && <p className={styles.foundTitle}>Found {books.totalItems} results</p>}
+      {totalItems ? <p className={styles.foundTitle}>Found {totalItems} results</p> : null}
       <div className={styles.content}>
-        {books.items
-          ? books.items.map(book => (
+        {books.length
+          ? books.map(book => (
               <div className={styles.searchItem} key={book.etag} onClick={() => openBookInfo(book.id)}>
                 {book.volumeInfo.imageLinks ? (
                   <img src={book.volumeInfo.imageLinks.thumbnail} alt="book img" />
@@ -60,16 +48,22 @@ export const BooksList = ({ books, setBooks, search}) => {
             ))
           : null}
       </div>
-      {books.items && (
-        <button
-          className={styles.loadMore}
-          onClick={() => {
-            setStartIndex(startIndex + 10);
-          }}
-        >
+      {books.length ? (
+        <button className={styles.loadMore} onClick={loadMoreBooks}>
           Load more...
         </button>
-      )}
+      ) : null}
     </>
   );
 };
+
+const mapStateToProps = state => ({
+  books: booksSelector(state),
+  totalItems: totalItemsSelector(state),
+});
+
+const mapDispatchToProps = {
+  loadMoreBooks: loadMoreBooksThunk,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BooksList);
